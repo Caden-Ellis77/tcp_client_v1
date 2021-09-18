@@ -39,7 +39,6 @@ int tcp_client_parse_arguments(int argc, char *argv[], Config *config) {
         if (!strcmp(argv[i], "--help")) {
             log_set_level(LOG_DEBUG);
             print_help_menu();
-            // log_debug("help menu");
             return ARG_ERROR;
         }
     }
@@ -148,13 +147,13 @@ int tcp_client_connect(Config config) {
         return -1;
     }
 
-    log_debug("Creating socket");
+    log_info("Creating socket");
     if ((sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1) {
         log_error("client: socket failed to create");
         return TCP_CLIENT_BAD_SOCKET;
     }
 
-    log_debug("Connecting socket");
+    log_info("Connecting socket");
     if (connect(sockfd, res->ai_addr, res->ai_addrlen) == -1) {
         close(sockfd);
         log_error("client: failed to connect");
@@ -166,7 +165,7 @@ int tcp_client_connect(Config config) {
         return TCP_CLIENT_BAD_SOCKET;
     }
 
-    log_debug("Returning socket file descriptor");
+    log_info("Returning socket file descriptor");
     return sockfd;
 }
 
@@ -185,7 +184,7 @@ int tcp_client_send_request(int sockfd, Config config) {
 
     // Find the length of the message
     message_len = strlen(config.message);
-    log_debug("Configuring message to be sent");
+    log_info("Configuring message to be sent");
 
     // Create the request to be sent
     sprintf(request, "%s %d %s", config.action, message_len, config.message);
@@ -214,7 +213,7 @@ Return value:
 */
 int tcp_client_receive_response(int sockfd, char *buf, int buf_size) {
     int return_value;
-    log_debug("Starting to receive");
+    log_info("Starting to receive");
     if ((return_value = recv(sockfd, buf, buf_size, 0)) <= 0) {
         log_error("Failed on recv. Code %d", return_value);
         return 1;
@@ -232,12 +231,11 @@ Return value:
     Returns a 1 on failure, 0 on success
 */
 int tcp_client_close(int sockfd) {
-    log_debug("Closing socket");
+    log_info("Closing socket");
     int return_value;
     if ((return_value = close(sockfd)) != 0) {
         log_debug("Close failed. Code: %d", return_value);
         return 1;
     }
-    log_debug("Close succeed");
     return 0;
 }
