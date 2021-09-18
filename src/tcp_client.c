@@ -164,7 +164,7 @@ int tcp_client_connect(Config config) {
         log_error("client: failed to connect\n");
         return TCP_CLIENT_BAD_SOCKET;
     }
-
+    freeaddrinfo(res);
     log_info("Returning socket file descriptor");
     return sockfd;
 }
